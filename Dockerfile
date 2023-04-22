@@ -24,5 +24,5 @@ RUN cd tex && \
     latexmk -pdf example.tex && \
     cd ..
 
-EXPOSE 3000
+EXPOSE 3300
 ENTRYPOINT [ "/app/src/target/release/agartex-compilation" ]
