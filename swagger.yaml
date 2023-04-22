@@ -5,7 +5,7 @@ info:
     This is a server for compiling Latex documents
   version: 0.0.1
 servers:
-  - url: http://localhost:3002
+  - url: http://localhost:3300
 tags:
   - name: compile
     description: LaTeX document compilation
@@ -13,7 +13,7 @@ paths:
   /projects/{projectId}/pdf:
     post:
       security:
-        - session_id: []
+        - user_id: []
       parameters:
         - in: path
           name: projectId
@@ -107,7 +107,7 @@ components:
       required:
         - entrypoint
   securitySchemes:
-    session_id:
+    user_id:
       type: apiKey
-      in: cookie
-      name: RSESSID
+      in: header
+      name: X-User-Id
