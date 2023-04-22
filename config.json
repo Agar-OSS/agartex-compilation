@@ -1,5 +1,0 @@
-{
-    "server_addr": "0.0.0.0:3002",
-    "tmp_file_dir": "/tmp/agar_service/",
-    "latexmk_path": "latexmk"
-}
