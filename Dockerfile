@@ -8,6 +8,9 @@ COPY Cargo.toml .
 RUN cargo build --release
 
 COPY . .
+
+# Force cargo to recompile
+RUN touch src/main.rs
 RUN cargo build --release
 
 FROM agaross.azurecr.io/agar-oss/latex-base:latest as environment
