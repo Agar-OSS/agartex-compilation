@@ -3,7 +3,7 @@ use std::{path::PathBuf, fmt::Debug, fs};
 use axum::async_trait;
 use tracing::error;
 
-use crate::config::CONFIG;
+use crate::constants::{TMP_FILE_DIR, LATEXMK_PATH};
 
 use super::execution::{ExecutionService, ProcessExecutionService, ProcessExecutionError};
 
@@ -22,7 +22,7 @@ pub struct SimpleCompilationService<T: ExecutionService> {
 
 impl<T: ExecutionService> SimpleCompilationService<T> {
     pub fn new(executor: T) -> Self {
-        fs::create_dir_all(&CONFIG.tmp_file_dir).unwrap();
+        fs::create_dir_all(TMP_FILE_DIR.as_path()).unwrap();
         Self {
             executor
         }
@@ -53,14 +53,14 @@ impl CompilationService for SimpleCompilationService<ProcessExecutionService> {
     async fn compile(&self, raw_text: Self::CompileOptions) -> Result<PathBuf, Self::CompilationError> {
         let rand_id = rand::random::<u32>();
         
-        let input_path = CONFIG.tmp_file_dir.join(format!("{}.tex", rand_id));
+        let input_path = TMP_FILE_DIR.join(format!("{}.tex", rand_id));
 
         if let Err(err) = fs::write(&input_path, raw_text) {
             error!(%err);
             return Err(SimpleCompilationError::Unexpected);
         }
 
-        let output_path = CONFIG.tmp_file_dir.join(rand_id.to_string());
+        let output_path = TMP_FILE_DIR.join(rand_id.to_string());
 
         let args = [
             format!("-outdir={}", output_path.to_str().unwrap()),
@@ -69,7 +69,7 @@ impl CompilationService for SimpleCompilationService<ProcessExecutionService> {
             input_path.to_str().unwrap().to_owned()
         ];
         
-        match self.executor.execute(&CONFIG.latexmk_path, &args).await {
+        match self.executor.execute(LATEXMK_PATH.as_str(), &args).await {
             Err(ProcessExecutionError::Unknown) => return Err(SimpleCompilationError::Unexpected),
             Err(ProcessExecutionError::StatusError(_, msg)) => return Err(SimpleCompilationError::Message(msg)),
             Ok(_) => ()
