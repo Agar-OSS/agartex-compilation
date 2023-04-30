@@ -28,4 +28,4 @@ RUN cd tex && \
     cd ..
 
 EXPOSE 3300
-ENTRYPOINT [ "/app/src/target/release/agartex-compilation" ]
+ENTRYPOINT [ "/app/agartex-compilation" ]

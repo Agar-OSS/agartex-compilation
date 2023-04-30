@@ -1,0 +1,9 @@
+/Dockerfile
+/.dockerignore
+/.git
+/.gitignore
+/latex
+/LICENSE
+/README.md
+/swagger.yaml
+/target
