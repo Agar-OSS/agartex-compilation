@@ -1,17 +1,21 @@
-use std::{fmt::Debug, ffi::OsStr};
 use async_process::Command;
+use std::{ffi::OsStr, fmt::Debug};
 
 use axum::async_trait;
 use tracing::{error, info};
 
 pub enum ExecutionError {
     Unknown,
-    MessageError(String)
+    MessageError(String),
 }
 
 #[async_trait]
 pub trait ExecutionService {
-    async fn execute<I, S>(&self, comm: impl AsRef<OsStr> + Debug + Send, args: I) -> Result<String, ExecutionError>
+    async fn execute<I, S>(
+        &self,
+        comm: impl AsRef<OsStr> + Debug + Send,
+        args: I,
+    ) -> Result<String, ExecutionError>
     where
         I: IntoIterator<Item = S> + Debug + Send,
         S: AsRef<OsStr>;
@@ -23,17 +27,19 @@ pub struct ProcessExecutionService;
 #[async_trait]
 impl ExecutionService for ProcessExecutionService {
     #[tracing::instrument]
-    async fn execute<I, S>(&self, comm: impl AsRef<OsStr> + Debug + Send, args: I) -> Result<String, ExecutionError>
+    async fn execute<I, S>(
+        &self,
+        comm: impl AsRef<OsStr> + Debug + Send,
+        args: I,
+    ) -> Result<String, ExecutionError>
     where
         I: IntoIterator<Item = S> + Debug + Send,
-        S: AsRef<OsStr>
+        S: AsRef<OsStr>,
     {
         info!("Received command.");
-        
-        let command = Command::new(comm)
-            .args(args)
-            .output();
-        
+
+        let command = Command::new(comm).args(args).output();
+
         let out = match command.await {
             Ok(out) => out,
             Err(err) => {

@@ -12,5 +12,5 @@ pub struct Project {
 pub struct Document {
     pub document_id: i32,
     pub project_id: i32,
-    pub name: String
+    pub name: String,
 }
