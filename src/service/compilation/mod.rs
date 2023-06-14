@@ -132,6 +132,7 @@ where
 
         let args = [
             format!("-outdir={}", output_path.to_str().unwrap()),
+            "-cd".to_string(),
             "-pdf".to_string(),
             "-logfilewarninglist-".to_string(),
             input_path.to_str().unwrap().to_owned(),

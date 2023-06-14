@@ -1,7 +1,7 @@
-use async_process::Command;
 use std::{ffi::OsStr, fmt::Debug};
 
 use axum::async_trait;
+use tokio::process::Command;
 use tracing::{error, info};
 
 pub enum ExecutionError {
