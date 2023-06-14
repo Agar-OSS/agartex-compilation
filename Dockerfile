@@ -16,6 +16,7 @@ RUN cargo build --release
 FROM agaross.azurecr.io/agar-oss/latex-base:latest as environment
 
 WORKDIR /app
+VOLUME /app/blobs
 RUN chmod 777 .
 
 RUN useradd user

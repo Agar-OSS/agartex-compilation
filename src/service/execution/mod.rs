@@ -4,26 +4,30 @@ use async_process::Command;
 use axum::async_trait;
 use tracing::{error, info};
 
+pub enum ExecutionError {
+    Unknown,
+    MessageError(String)
+}
+
 #[async_trait]
 pub trait ExecutionService {
-    type ExecutionError;
-    async fn execute<'a>(&self, comm: impl AsRef<OsStr> + Debug + Send, args: &'a [impl AsRef<OsStr> + Debug + Sync]) -> Result<String, Self::ExecutionError>;
+    async fn execute<I, S>(&self, comm: impl AsRef<OsStr> + Debug + Send, args: I) -> Result<String, ExecutionError>
+    where
+        I: IntoIterator<Item = S> + Debug + Send,
+        S: AsRef<OsStr>;
 }
 
 #[derive(Debug, Clone)]
 pub struct ProcessExecutionService;
 
-pub enum ProcessExecutionError {
-    Unknown,
-    StatusError(Option<i32>, String)
-}
-
 #[async_trait]
 impl ExecutionService for ProcessExecutionService {
-    type ExecutionError = ProcessExecutionError;
-    
     #[tracing::instrument]
-    async fn execute<'a>(&self, comm: impl AsRef<OsStr> + Debug + Send, args: &'a [impl AsRef<OsStr> + Debug + Sync]) -> Result<String, Self::ExecutionError> {
+    async fn execute<I, S>(&self, comm: impl AsRef<OsStr> + Debug + Send, args: I) -> Result<String, ExecutionError>
+    where
+        I: IntoIterator<Item = S> + Debug + Send,
+        S: AsRef<OsStr>
+    {
         info!("Received command.");
         
         let command = Command::new(comm)
@@ -34,7 +38,7 @@ impl ExecutionService for ProcessExecutionService {
             Ok(out) => out,
             Err(err) => {
                 error!(%err);
-                return Err(ProcessExecutionError::Unknown);
+                return Err(ExecutionError::Unknown);
             }
         };
 
@@ -42,12 +46,12 @@ impl ExecutionService for ProcessExecutionService {
             Ok(msg) => msg,
             Err(err) => {
                 error!(%err);
-                return Err(ProcessExecutionError::Unknown);
+                return Err(ExecutionError::Unknown);
             }
         };
 
         if !out.status.success() {
-            Err(ProcessExecutionError::StatusError(out.status.code(), msg))
+            Err(ExecutionError::MessageError(msg))
         } else {
             Ok(msg)
         }
