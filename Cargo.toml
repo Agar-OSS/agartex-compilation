@@ -7,14 +7,14 @@ edition = "2021"
 
 [dependencies]
 anyhow = "1.0.70"
-async-process = "1.7.0"
 axum = { version = "0.6.10", features = ["headers"] }
 http = "0.2.9"
 lazy_static = "1.4.0"
 rand = "0.8.5"
+reqwest = { version = "0.11.18", features = ["json"] }
 serde = { version = "1.0.156", features = ["derive"] }
 serde_json = "1.0.96"
-tokio = { version = "1.26.0", features = ["macros", "rt-multi-thread", "fs"] }
+tokio = { version = "1.26.0", features = ["macros", "rt-multi-thread", "fs", "process"] }
 tokio-util = { version = "0.7.7", features = ["io"] }
 tracing = "0.1.37"
 tracing-subscriber = "0.3.16"

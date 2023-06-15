@@ -28,11 +28,19 @@ paths:
         Returns a pdf, which will be compiled if needed. Takes in options to control the compilation process.
       operationId: compile
       requestBody:
-        description: Compile options
+        description: Takes in text of the LaTeX document for the project to be compiled
         content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CompileOptions'
+          text/plain:
+            schema: 
+              type: string
+              example: |-
+                \documentclass{article}
+                \begin{document}
+                This will compile successfully.
+                \[
+                  x = y^2
+                \]
+                \end{document}
       responses:
         200:
           description: PDF file
@@ -44,11 +52,15 @@ paths:
         400:
           description: Malformed request body
         401:
-          description: Unauthorized to execute operation
+          description: Unauthorized
+        403:
+          description: No access to project
+        404:
+          description: Project not found
         415:
           description: Unsupported media type
         422:
-          description: Request validation errors (e.g. missing required fields in options)
+          description: Compilation errors
   /compile:
     post:
       tags:

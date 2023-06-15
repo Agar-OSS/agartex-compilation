@@ -2,8 +2,12 @@ use tracing::{error, info};
 
 mod constants;
 mod control;
+mod domain;
+mod extract;
+mod repository;
 mod routing;
 mod service;
+mod utils;
 
 use routing::main_router;
 
