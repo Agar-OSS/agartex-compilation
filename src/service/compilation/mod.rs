@@ -56,6 +56,8 @@ impl<T: ExecutionService + Send + Sync> CompilationService for SimpleCompilation
         let output_path = TMP_FILE_DIR.join(rand_id.to_string());
 
         let args = [
+            "-shell-escape".to_string(),
+            "-file-line-error".to_string(),
             format!("-outdir={}", output_path.to_str().unwrap()),
             "-pdf".to_string(),
             "-logfilewarninglist".to_string(),
@@ -131,6 +133,7 @@ where
         let output_path = TMP_FILE_DIR.join(rand_id.to_string());
 
         let args = [
+            "-shell-escape".to_string(),
             format!("-outdir={}", output_path.to_str().unwrap()),
             "-cd".to_string(),
             "-pdf".to_string(),
