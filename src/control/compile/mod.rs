@@ -18,7 +18,7 @@ use crate::{
     service::compilation::{CompilationError, CompilationService},
 };
 
-#[tracing::instrument(skip(service))]
+#[tracing::instrument(skip_all)]
 pub async fn post_compile<T>(
     Extension(service): Extension<T>,
     raw_text: String,
@@ -46,7 +46,7 @@ where
     Ok((headers, StreamBody::new(ReaderStream::new(file))))
 }
 
-#[tracing::instrument(skip(service))]
+#[tracing::instrument(skip(service, raw_text))]
 pub async fn post_project_compile<T>(
     Extension(service): Extension<T>,
     TypedHeader(XUserId(user_id)): TypedHeader<XUserId>,
