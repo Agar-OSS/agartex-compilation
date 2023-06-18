@@ -42,7 +42,7 @@ impl<T: ExecutionService> SimpleCompilationService<T> {
 impl<T: ExecutionService + Send + Sync> CompilationService for SimpleCompilationService<T> {
     type CompileOptions = String;
 
-    #[tracing::instrument(skip(self))]
+    #[tracing::instrument(skip_all)]
     async fn compile(&self, raw_text: Self::CompileOptions) -> Result<File, CompilationError> {
         let rand_id = rand::random::<u32>();
 
@@ -110,11 +110,9 @@ where
 {
     type CompileOptions = (i32, i32, String);
 
-    #[tracing::instrument(skip(self))]
-    async fn compile(
-        &self,
-        (user_id, project_id, raw_text): Self::CompileOptions,
-    ) -> Result<File, CompilationError> {
+    #[tracing::instrument(skip_all, fields(user_id = options.0, project_id = options.1))]
+    async fn compile(&self, options: Self::CompileOptions) -> Result<File, CompilationError> {
+        let (user_id, project_id, raw_text) = options;
         let rand_id = rand::random::<u32>();
 
         let input_path = get_project_path(project_id).join(MAIN_DOC_NAME.as_str());
